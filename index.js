@@ -4,8 +4,13 @@ const cors = require('cors');
 const app = express();
 const router = express.Router();
 
+function log(req, res, next) {
+  console.log(req.method, req.path);
+  next();
+}
+
 // const whitelistOrigins = JSON.parse(process.env.WHITELIST_ORIGINS);
-const whitelistOrigins = ['http://localhost:8000'];
+const whitelistOrigins = ['http://localhost:8000', 'https://www.google.com'];
 const corsOptions = {
   origin(origin, callback) {
     if (whitelistOrigins.indexOf(origin) !== -1 || !origin) {
@@ -18,6 +23,8 @@ const corsOptions = {
 app.get('/test', (req, res) => {
   res.json({ ok: true });
 });
+
+app.use(log);
 
 router.options('*', cors(corsOptions));
 
@@ -37,7 +44,7 @@ dataRouter.get('/get', (req, res) => {
 });
 router.use('/data', dataRouter);
 
-// this line was omitted from the provided code, but I assume this is what OP must be doing?
+// this line was omitted from the provided code, but I assume this is what OP is doing
 app.use(router);
 
 const PORT = process.env.PORT || 8000;
